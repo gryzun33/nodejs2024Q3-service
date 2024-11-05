@@ -6,7 +6,7 @@ import { UpdatePasswordDto } from './dto/updatePassword.dto';
 
 @Injectable()
 export class UserService {
-  private users: User[] = [];
+  private users: Map<string, User> = new Map();
 
   createUser(createUserDto: CreateUserDto): UserResponse {
     const newUser: User = {
@@ -18,20 +18,20 @@ export class UserService {
       updatedAt: Date.now(),
     };
 
-    this.users.push(newUser);
+    this.users.set(newUser.id, newUser);
 
     const { password, ...userWithoutPassword } = newUser;
     return userWithoutPassword;
   }
 
   findAllUsers(): UserResponse[] {
-    return this.users.map(
+    return Array.from(this.users.values()).map(
       ({ password, ...userWithoutPassword }) => userWithoutPassword,
     );
   }
 
   findUserById(id: string): UserResponse | undefined {
-    const user = this.users.find((user) => user.id === id);
+    const user = this.users.get(id);
     if (user) {
       const { password, ...userWithoutPassword } = user;
       return userWithoutPassword;
@@ -43,7 +43,7 @@ export class UserService {
     id: string,
     updatePasswordDto: UpdatePasswordDto,
   ): UserResponse | undefined {
-    const user = this.users.find((user) => user.id === id);
+    const user = this.users.get(id);
     if (user) {
       if (user.password !== updatePasswordDto.oldPassword) {
         throw new Error('Old password is incorrect');
@@ -60,11 +60,6 @@ export class UserService {
   }
 
   deleteUser(id: string): boolean {
-    const userIndex = this.users.findIndex((user) => user.id === id);
-    if (userIndex !== -1) {
-      this.users.splice(userIndex, 1);
-      return true;
-    }
-    return false;
+    return this.users.delete(id);
   }
 }
