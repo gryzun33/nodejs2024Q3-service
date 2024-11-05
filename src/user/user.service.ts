@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { User, UserResponse } from './interfaces/user.interface';
 import { CreateUserDto } from './dto/createUser.dto';
 import { v4 as uuidv4 } from 'uuid';
@@ -30,36 +34,40 @@ export class UserService {
     );
   }
 
-  findUserById(id: string): UserResponse | undefined {
+  findUserById(id: string): UserResponse {
     const user = this.users.get(id);
-    if (user) {
-      const { password, ...userWithoutPassword } = user;
-      return userWithoutPassword;
+    if (!user) {
+      throw new NotFoundException(`User not found.`);
     }
-    return undefined;
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 
   updatePassword(
     id: string,
     updatePasswordDto: UpdatePasswordDto,
-  ): UserResponse | undefined {
+  ): UserResponse {
     const user = this.users.get(id);
-    if (user) {
-      if (user.password !== updatePasswordDto.oldPassword) {
-        throw new Error('Old password is incorrect');
-      }
-
-      user.password = updatePasswordDto.newPassword;
-      user.updatedAt = Date.now();
-      user.version += 1;
-
-      const { password, ...userWithoutPassword } = user;
-      return userWithoutPassword;
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
-    return undefined;
+
+    if (user.password !== updatePasswordDto.oldPassword) {
+      throw new ForbiddenException('Old password is incorrect');
+    }
+
+    user.password = updatePasswordDto.newPassword;
+    user.updatedAt = Date.now();
+    user.version += 1;
+
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 
-  deleteUser(id: string): boolean {
-    return this.users.delete(id);
+  deleteUser(id: string): void {
+    const result = this.users.delete(id);
+    if (!result) {
+      throw new NotFoundException('User not found');
+    }
   }
 }

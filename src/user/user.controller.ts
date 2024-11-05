@@ -6,11 +6,16 @@ import {
   Body,
   Put,
   Delete,
+  NotFoundException,
+  ParseUUIDPipe,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/createUser.dto';
 import { User, UserResponse } from './interfaces/user.interface';
 import { UpdatePasswordDto } from './dto/updatePassword.dto';
+// import { GetUserByIdDto } from './dto/getUserById.dto';
 
 @Controller('user')
 export class UserController {
@@ -22,30 +27,27 @@ export class UserController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): UserResponse | undefined {
+  findOne(@Param('id', new ParseUUIDPipe()) id: string): UserResponse {
     return this.userService.findUserById(id);
   }
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   create(@Body() createUserDto: CreateUserDto): UserResponse {
     return this.userService.createUser(createUserDto);
   }
 
   @Put(':id')
   updatePassword(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
-  ): UserResponse | undefined {
+  ): UserResponse {
     return this.userService.updatePassword(id, updatePasswordDto);
   }
 
   @Delete(':id')
-  deleteUser(@Param('id') id: string): string {
-    const result = this.userService.deleteUser(id);
-    if (result) {
-      return `User with id ${id} has been deleted successfully.`;
-    } else {
-      return `User with id ${id} not found.`;
-    }
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deleteUser(@Param('id', new ParseUUIDPipe()) id: string): void {
+    this.userService.deleteUser(id);
   }
 }
