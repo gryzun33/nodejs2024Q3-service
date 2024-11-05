@@ -24,14 +24,17 @@ export class UserService {
 
     this.users.set(newUser.id, newUser);
 
-    const { password, ...userWithoutPassword } = newUser;
+    const userWithoutPassword = { ...newUser };
+    delete userWithoutPassword.password;
     return userWithoutPassword;
   }
 
   findAllUsers(): UserResponse[] {
-    return Array.from(this.users.values()).map(
-      ({ password, ...userWithoutPassword }) => userWithoutPassword,
-    );
+    return Array.from(this.users.values()).map((user) => {
+      const userWithoutPassword = { ...user };
+      delete userWithoutPassword.password;
+      return userWithoutPassword;
+    });
   }
 
   findUserById(id: string): UserResponse {
@@ -39,7 +42,8 @@ export class UserService {
     if (!user) {
       throw new NotFoundException(`User not found.`);
     }
-    const { password, ...userWithoutPassword } = user;
+    const userWithoutPassword = { ...user };
+    delete userWithoutPassword.password;
     return userWithoutPassword;
   }
 
@@ -60,7 +64,8 @@ export class UserService {
     user.updatedAt = Date.now();
     user.version += 1;
 
-    const { password, ...userWithoutPassword } = user;
+    const userWithoutPassword = { ...user };
+    delete userWithoutPassword.password;
     return userWithoutPassword;
   }
 

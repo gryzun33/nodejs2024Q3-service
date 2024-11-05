@@ -6,14 +6,13 @@ import {
   Body,
   Put,
   Delete,
-  NotFoundException,
   ParseUUIDPipe,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/createUser.dto';
-import { User, UserResponse } from './interfaces/user.interface';
+import { UserResponse } from './interfaces/user.interface';
 import { UpdatePasswordDto } from './dto/updatePassword.dto';
 // import { GetUserByIdDto } from './dto/getUserById.dto';
 
