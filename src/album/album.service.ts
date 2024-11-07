@@ -16,6 +16,7 @@ export class AlbumService {
   private albums: Map<string, Album> = new Map();
 
   constructor(
+    // @Inject(forwardRef(() => TrackService))
     private readonly trackService: TrackService,
 
     @Inject(forwardRef(() => FavoritesService))
@@ -62,6 +63,7 @@ export class AlbumService {
       throw new NotFoundException(`Album not found.`);
     }
     this.trackService.updateAlbumIdToNull(id);
+    this.favoritesService.removeAlbum(id);
   }
 
   updateArtistIdToNull(id: string) {
@@ -71,7 +73,7 @@ export class AlbumService {
     albums.forEach((album: Album) => {
       album.artistId = null;
       this.albums.set(album.id, album);
-      console.log(`Updated album ${album.id} with artistId: null`);
+      // console.log(`Updated album ${album.id} with artistId: null`);
     });
   }
 }

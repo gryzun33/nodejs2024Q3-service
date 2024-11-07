@@ -61,6 +61,7 @@ export class TrackService {
     if (!result) {
       throw new NotFoundException('Track not found');
     }
+    this.favoritesService.removeTrack(id);
   }
 
   updateAlbumIdToNull(albumId: string) {
@@ -70,7 +71,7 @@ export class TrackService {
     tracks.forEach((track: Track) => {
       track.albumId = null;
       this.tracks.set(track.id, track);
-      console.log(`Updated track ${track.id} with albumId: null`);
+      // console.log(`Updated track ${track.id} with albumId: null`);
     });
   }
 
@@ -81,7 +82,7 @@ export class TrackService {
     tracks.forEach((track: Track) => {
       track.artistId = null;
       this.tracks.set(track.id, track);
-      console.log(`Updated track ${track.id} with artistId: null`);
+      // console.log(`Updated track ${track.id} with artistId: null`);
     });
   }
 }
