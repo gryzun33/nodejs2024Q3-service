@@ -4,12 +4,16 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { AlbumService } from 'src/album/album.service';
+import { TrackService } from 'src/track/track.service';
 
 @Injectable()
 export class ArtistService {
   private artists: Map<string, Artist> = new Map();
 
-  constructor(private readonly albumService: AlbumService) {}
+  constructor(
+    private readonly albumService: AlbumService,
+    private readonly trackService: TrackService,
+  ) {}
   create(createArtistDto: CreateArtistDto): Artist {
     const newArtist: Artist = {
       id: uuidv4(),
@@ -49,5 +53,6 @@ export class ArtistService {
       throw new NotFoundException('Artist not found');
     }
     this.albumService.updateArtistIdToNull(id);
+    this.trackService.updateArtistIdToNull(id);
   }
 }

@@ -3,10 +3,13 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './entities/album.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { TrackService } from 'src/track/track.service';
 
 @Injectable()
 export class AlbumService {
   private albums: Map<string, Album> = new Map();
+
+  constructor(private readonly trackService: TrackService) {}
   create(createAlbumDto: CreateAlbumDto) {
     const newAlbum: Album = {
       id: uuidv4(),
@@ -47,6 +50,7 @@ export class AlbumService {
     if (!album) {
       throw new NotFoundException(`Album not found.`);
     }
+    this.trackService.updateAlbumIdToNull(id);
   }
 
   updateArtistIdToNull(id: string) {
