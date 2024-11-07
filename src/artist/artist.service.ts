@@ -17,7 +17,9 @@ export class ArtistService {
   private artists: Map<string, Artist> = new Map();
 
   constructor(
+    @Inject(forwardRef(() => AlbumService))
     private readonly albumService: AlbumService,
+    @Inject(forwardRef(() => TrackService))
     private readonly trackService: TrackService,
 
     @Inject(forwardRef(() => FavoritesService))
