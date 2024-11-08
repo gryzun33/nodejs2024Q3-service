@@ -41,11 +41,7 @@ export class ArtistService {
   }
 
   findOne(id: string): Artist {
-    const artist = this.artists.get(id);
-    if (!artist) {
-      throw new NotFoundException(`Artist not found.`);
-    }
-    return artist;
+    return this.artists.get(id);
   }
 
   update(id: string, updateArtistDto: UpdateArtistDto) {

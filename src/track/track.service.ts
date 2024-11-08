@@ -37,11 +37,7 @@ export class TrackService {
   }
 
   findOne(id: string): Track {
-    const track = this.tracks.get(id);
-    if (!track) {
-      throw new NotFoundException(`Track not found.`);
-    }
-    return track;
+    return this.tracks.get(id);
   }
 
   update(id: string, updateTrackDto: UpdateTrackDto): Track {

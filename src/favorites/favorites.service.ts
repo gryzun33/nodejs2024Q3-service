@@ -39,7 +39,6 @@ export class FavoritesService {
     const tracks = Array.from(this.favTracks).map((id) =>
       this.trackService.findOne(id),
     );
-
     return { artists, albums, tracks };
   }
 

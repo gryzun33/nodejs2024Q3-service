@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   HttpCode,
   HttpStatus,
+  NotFoundException,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
@@ -30,7 +31,11 @@ export class AlbumController {
 
   @Get(':id')
   findOne(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.albumService.findOne(id);
+    const album = this.albumService.findOne(id);
+    if (!album) {
+      throw new NotFoundException(`Album not found.`);
+    }
+    return album;
   }
 
   @Put(':id')

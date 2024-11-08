@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   HttpCode,
   HttpStatus,
+  NotFoundException,
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
@@ -34,7 +35,11 @@ export class ArtistController {
   @Get(':id')
   @ApiOperation({ summary: 'Get single artist by id' })
   findOne(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.artistService.findOne(id);
+    const artist = this.artistService.findOne(id);
+    if (!artist) {
+      throw new NotFoundException(`Artist not found.`);
+    }
+    return artist;
   }
 
   @Put(':id')
