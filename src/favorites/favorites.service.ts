@@ -16,9 +16,9 @@ import { FavoritesResponse } from './entities/favorites.entity';
 
 @Injectable()
 export class FavoritesService {
-  private favArtists: Set<string> = new Set();
-  private favAlbums: Set<string> = new Set();
-  private favTracks: Set<string> = new Set();
+  public favArtists: Set<string> = new Set();
+  public favAlbums: Set<string> = new Set();
+  public favTracks: Set<string> = new Set();
 
   constructor(
     @Inject(forwardRef(() => ArtistService))

@@ -14,7 +14,7 @@ export class UpdateTrackDto {
   @IsUUID('4')
   artistId: string | null;
   @IsDefined()
-  @ValidateIf((object) => object.artistId !== null)
+  @ValidateIf((object) => object.albumId !== null)
   @IsUUID('4')
   albumId: string | null;
 

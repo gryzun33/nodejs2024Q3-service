@@ -65,6 +65,9 @@ export class ArtistService {
     }
     this.albumService.updateArtistIdToNull(id);
     this.trackService.updateArtistIdToNull(id);
-    this.favoritesService.removeArtist(id);
+
+    if (this.favoritesService.favArtists.has(id)) {
+      this.favoritesService.removeArtist(id);
+    }
   }
 }

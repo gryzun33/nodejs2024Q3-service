@@ -61,7 +61,9 @@ export class TrackService {
     if (!result) {
       throw new NotFoundException('Track not found');
     }
-    this.favoritesService.removeTrack(id);
+    if (this.favoritesService.favTracks.has(id)) {
+      this.favoritesService.removeTrack(id);
+    }
   }
 
   updateAlbumIdToNull(albumId: string) {

@@ -63,7 +63,9 @@ export class AlbumService {
       throw new NotFoundException(`Album not found.`);
     }
     this.trackService.updateAlbumIdToNull(id);
-    this.favoritesService.removeAlbum(id);
+    if (this.favoritesService.favAlbums.has(id)) {
+      this.favoritesService.removeAlbum(id);
+    }
   }
 
   updateArtistIdToNull(id: string) {
