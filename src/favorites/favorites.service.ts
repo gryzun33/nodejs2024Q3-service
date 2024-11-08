@@ -1,5 +1,7 @@
 import {
   forwardRef,
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -44,7 +46,10 @@ export class FavoritesService {
   addArtist(id: string): void {
     const artist = this.artistService.findOne(id);
     if (!artist) {
-      throw new NotFoundException(`Artist with id ${id} not found`);
+      throw new HttpException(
+        `Artist with id ${id} doesn't exist`,
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
     this.favArtists.add(id);
   }
@@ -52,7 +57,10 @@ export class FavoritesService {
   addAlbum(id: string): void {
     const album = this.albumService.findOne(id);
     if (!album) {
-      throw new NotFoundException(`Album with id ${id} not found`);
+      throw new HttpException(
+        `Album with id ${id} doesn't exist`,
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
     this.favAlbums.add(id);
   }
@@ -60,7 +68,10 @@ export class FavoritesService {
   addTrack(id: string): void {
     const track = this.trackService.findOne(id);
     if (!track) {
-      throw new NotFoundException(`Track with id ${id} not found`);
+      throw new HttpException(
+        `Track with id ${id} doesn't exist`,
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
     this.favTracks.add(id);
   }
