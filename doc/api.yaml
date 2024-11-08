@@ -5,7 +5,7 @@ info:
   version: 1.0.0
 
 servers:
-  - url: /api
+  - url: /doc
 
 components:
   schemas:
@@ -30,6 +30,21 @@ components:
       required:
         - id
         - login
+        - version
+        - createAt
+        - updateAt
+    CreateUserDto:
+      type: object
+      properties:
+        login:
+          type: string
+          description: The user's login.
+        password:
+          type: string
+          description: The user's password.
+      required:
+        - login
+        - password
     Artist:
       type: object
       properties:
@@ -38,13 +53,14 @@ components:
           format: uuid
         name:
           type: string
-          example: 'Freddie Mercury'
+          example: 'Olga Buzova'
         grammy:
           type: boolean
-          example: false
+          example: true
       required:
         - id
         - name
+        - grammy
     Album:
       type: object
       properties:
@@ -53,10 +69,10 @@ components:
           format: uuid
         name:
           type: string
-          example: 'Innuendo'
+          example: 'Pod zvuki pocelujev'
         year:
           type: integer
-          example: 1991
+          example: 2017
         artistId:
           type: string
           format: uuid
@@ -64,6 +80,8 @@ components:
       required:
         - id
         - name
+        - year
+        - artistId
     Track:
       type: object
       properties:
@@ -72,7 +90,7 @@ components:
           format: uuid
         name:
           type: string
-          example: The Show Must Go On
+          example: 'Malo polovin'
         artistId:
           type: string
           format: uuid
@@ -89,6 +107,8 @@ components:
         - id
         - name
         - duration
+        - albumId
+        - artistId
     Favorites:
       type: object
       properties:
@@ -104,92 +124,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Track'
-  responses:
-    UnauthorizedError:
-      description: Access token is missing or invalid
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-
-security:
-  - bearerAuth: []
 
 paths:
-  /login:
-    post:
-      tags:
-        - Login
-      security: []
-      summary: Login
-      description: Logins a user and returns a JWT-token
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              title: example
-              properties:
-                login:
-                  type: string
-                  description: Username
-                password:
-                  type: string
-                  description: Password
-              required:
-                - user
-                - login
-      responses:
-        200:
-          description: Successful login.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                description: JWT Token
-        403:
-          description: Incorrect login or password
-  /signup:
-    post:
-      tags:
-        - Signup
-      security: [ ]
-      summary: Signup
-      description: Signup a user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              title: example
-              properties:
-                login:
-                  type: string
-                  minLength: 3
-                  maxLength: 255
-                  description: Username
-                password:
-                  type: string
-                  format: password
-                  pattern: ^[a-zA-Z0-9]{3,30}
-                  description: Password
-              required:
-                - login
-                - password
-      responses:
-        204:
-          description: Successful signup
-        400:
-          description: Bad request
-        409:
-          description: Conflict. Login already exists
-  /users:
+  /user:
     get:
       tags:
         - Users
@@ -197,15 +134,13 @@ paths:
       description: Gets all users
       responses:
         200:
-          description: Successful operation
+          description: Successful operation. Returns all user records.
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
-        401:
-          $ref: '#/components/responses/UnauthorizedError'
     post:
       tags:
         - Users
@@ -216,30 +151,17 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              title: example
-              properties:
-                login:
-                  type: string
-                  description: The user's login
-                password:
-                  type: string
-                  description: The user's password
-              required:
-                - login
-                - password
+              $ref: '#/components/schemas/CreateUserDto'
       responses:
         201:
-          description: The user has been created.
+          description: The user has been created successfully. Returns the newly created user.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
         400:
-          description: Bad request. body does not contain required fields
-        401:
-          $ref: '#/components/responses/UnauthorizedError'
-  /users/{userId}:
+          description: Bad request. The body does not contain required fields or the fields are invalid.
+  /user/{userId}:
     parameters:
       - name: userId
         in: path
@@ -334,7 +256,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: User not found
-  /tracks:
+  /track:
     get:
       tags:
         - Track
@@ -388,7 +310,7 @@ paths:
           description: Bad request. body does not contain required fields
         401:
           $ref: '#/components/responses/UnauthorizedError'
-  /tracks/{id}:
+  /track/{id}:
     parameters:
       - name: id
         in: path
@@ -492,7 +414,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Track was not found.
-  /albums:
+  /album:
     get:
       tags:
         - Album
@@ -544,7 +466,7 @@ paths:
           description: Bad request. body does not contain required fields
         401:
           $ref: '#/components/responses/UnauthorizedError'
-  /albums/{id}:
+  /album/{id}:
     parameters:
       - name: id
         in: path
@@ -621,7 +543,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Album was not found.
-  /artists:
+  /artist:
     get:
       tags:
         - Artist
@@ -668,7 +590,7 @@ paths:
           description: Bad request. body does not contain required fields
         401:
           $ref: '#/components/responses/UnauthorizedError'
-  /artists/{id}:
+  /artist/{id}:
     parameters:
       - name: id
         in: path

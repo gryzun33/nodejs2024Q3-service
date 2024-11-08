@@ -11,9 +11,9 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/createUser.dto';
-import { UserResponse } from './interfaces/user.interface';
-import { UpdatePasswordDto } from './dto/updatePassword.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UserResponse } from './entities/user.entity';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 // import { GetUserByIdDto } from './dto/getUserById.dto';
 
 @Controller('user')
