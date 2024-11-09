@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { User, UserResponse } from './entities/user.entity';
+import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { UpdatePasswordDto } from './dto/update-password.dto';
@@ -12,7 +12,7 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 export class UserService {
   private users: Map<string, User> = new Map();
 
-  createUser(createUserDto: CreateUserDto): UserResponse {
+  createUser(createUserDto: CreateUserDto): User {
     const newUser: User = {
       id: uuidv4(),
       login: createUserDto.login,
@@ -29,7 +29,7 @@ export class UserService {
     return userWithoutPassword;
   }
 
-  findAllUsers(): UserResponse[] {
+  findAllUsers(): User[] {
     return Array.from(this.users.values()).map((user) => {
       const userWithoutPassword = { ...user };
       delete userWithoutPassword.password;
@@ -37,7 +37,7 @@ export class UserService {
     });
   }
 
-  findUserById(id: string): UserResponse {
+  findUserById(id: string): User {
     const user = this.users.get(id);
     if (!user) {
       throw new NotFoundException(`User not found.`);
@@ -47,10 +47,7 @@ export class UserService {
     return userWithoutPassword;
   }
 
-  updatePassword(
-    id: string,
-    updatePasswordDto: UpdatePasswordDto,
-  ): UserResponse {
+  updatePassword(id: string, updatePasswordDto: UpdatePasswordDto): User {
     const user = this.users.get(id);
     if (!user) {
       throw new NotFoundException('User not found');
