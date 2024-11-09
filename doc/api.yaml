@@ -15,7 +15,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/User'
       tags: &ref_0
-        - User
+        - Users
     post:
       operationId: UserController_create
       summary: Create a new user
@@ -121,7 +121,7 @@ paths:
         '400':
           description: Bad request. Invalid input.
       tags: &ref_1
-        - Artist
+        - Artists
     get:
       operationId: ArtistController_findAll
       summary: Get all artists
@@ -223,7 +223,7 @@ paths:
         '400':
           description: Bad request. Invalid input data.
       tags: &ref_2
-        - Album
+        - Albums
     get:
       operationId: AlbumController_findAll
       summary: Get all albums
@@ -325,7 +325,7 @@ paths:
         '400':
           description: Bad request. Invalid input data.
       tags: &ref_3
-        - Track
+        - Tracks
     get:
       operationId: TrackController_findAll
       summary: Get all tracks
@@ -409,13 +409,21 @@ paths:
   /favs:
     get:
       operationId: FavoritesController_getFavorites
+      summary: Retrieve all favorite items
       parameters: []
       responses:
         '200':
-          description: ''
+          description: Successfully retrieved all favorite items
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FavoritesResponse'
+      tags: &ref_4
+        - Favorites
   /favs/artist/{id}:
     post:
       operationId: FavoritesController_addArtistToFavorites
+      summary: Add artist to favorites
       parameters:
         - name: id
           required: true
@@ -424,9 +432,15 @@ paths:
             type: string
       responses:
         '201':
-          description: ''
+          description: Artist successfully added to favorites
+        '400':
+          description: Invalid UUID format.
+        '422':
+          description: Artist not found.
+      tags: *ref_4
     delete:
       operationId: FavoritesController_removeArtistFromFavorites
+      summary: Remove artist from favorites
       parameters:
         - name: id
           required: true
@@ -435,10 +449,16 @@ paths:
             type: string
       responses:
         '204':
-          description: ''
+          description: Artist successfully removed from favorites
+        '400':
+          description: Invalid UUID format.
+        '404':
+          description: Artist is not favorite.
+      tags: *ref_4
   /favs/album/{id}:
     post:
       operationId: FavoritesController_addAlbumToFavorites
+      summary: Add album to favorites
       parameters:
         - name: id
           required: true
@@ -447,9 +467,15 @@ paths:
             type: string
       responses:
         '201':
-          description: ''
+          description: Album successfully added to favorites
+        '400':
+          description: Invalid UUID format.
+        '422':
+          description: Album not found.
+      tags: *ref_4
     delete:
       operationId: FavoritesController_removeAlbumFromFavorites
+      summary: Remove album from favorites
       parameters:
         - name: id
           required: true
@@ -458,10 +484,16 @@ paths:
             type: string
       responses:
         '204':
-          description: ''
+          description: Album successfully removed from favorites
+        '400':
+          description: Invalid UUID format.
+        '404':
+          description: Album is not favorite.
+      tags: *ref_4
   /favs/track/{id}:
     post:
       operationId: FavoritesController_addTrackToFavorites
+      summary: Add track to favorites
       parameters:
         - name: id
           required: true
@@ -470,9 +502,15 @@ paths:
             type: string
       responses:
         '201':
-          description: ''
+          description: Track successfully added to favorites
+        '400':
+          description: Invalid UUID format.
+        '422':
+          description: Track not found.
+      tags: *ref_4
     delete:
       operationId: FavoritesController_removeTrackFromFavorites
+      summary: Remove track from favorites
       parameters:
         - name: id
           required: true
@@ -481,20 +519,25 @@ paths:
             type: string
       responses:
         '204':
-          description: ''
+          description: Track successfully removed from favorites
+        '400':
+          description: Invalid UUID format.
+        '404':
+          description: Track is not favorite.
+      tags: *ref_4
 info:
   title: Home Library Service
   description: Home music library service
   version: 1.0.0
   contact: {}
 tags:
-  - name: User
+  - name: Users
     description: Operations related to users
-  - name: Artist
+  - name: Artists
     description: Operations related to artists
-  - name: Album
+  - name: Albums
     description: Operations related to albums
-  - name: Track
+  - name: Tracks
     description: Operations related to tracks
   - name: Favorites
     description: Operations related to favorites
@@ -755,3 +798,36 @@ components:
         - artistId
         - albumId
         - duration
+    FavoritesResponse:
+      type: object
+      properties:
+        artists:
+          description: List of favorite artists
+          example:
+            - id: 550e8400-e29b-41d4-a716-446655440000
+              name: Radiohead
+          type: array
+          items:
+            $ref: '#/components/schemas/Artist'
+        albums:
+          description: List of favorite albums
+          example:
+            - id: 550e8400-e29b-41d4-a716-446655440001
+              name: In Rainbows
+              year: 2007
+          type: array
+          items:
+            $ref: '#/components/schemas/Album'
+        tracks:
+          description: List of favorite tracks
+          example:
+            - id: 550e8400-e29b-41d4-a716-446655440002
+              name: Jigsaw falling into place
+              duration: 240
+          type: array
+          items:
+            $ref: '#/components/schemas/Track'
+      required:
+        - artists
+        - albums
+        - tracks

@@ -23,10 +23,10 @@ async function bootstrap() {
     .setTitle('Home Library Service')
     .setDescription('Home music library service')
     .setVersion('1.0.0')
-    .addTag('User', 'Operations related to users')
-    .addTag('Artist', 'Operations related to artists')
-    .addTag('Album', 'Operations related to albums')
-    .addTag('Track', 'Operations related to tracks')
+    .addTag('Users', 'Operations related to users')
+    .addTag('Artists', 'Operations related to artists')
+    .addTag('Albums', 'Operations related to albums')
+    .addTag('Tracks', 'Operations related to tracks')
     .addTag('Favorites', 'Operations related to favorites')
     .build();
   const document = SwaggerModule.createDocument(app, config);
