@@ -52,3 +52,7 @@ npm run lint
 ```
 npm run format
 ```
+
+### How to use
+
+After starting the app you can open in your browser OpenAPI documentation by typing http://localhost:4000/doc/ and try making requests
