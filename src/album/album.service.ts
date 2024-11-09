@@ -71,7 +71,6 @@ export class AlbumService {
     albums.forEach((album: Album) => {
       album.artistId = null;
       this.albums.set(album.id, album);
-      // console.log(`Updated album ${album.id} with artistId: null`);
     });
   }
 }

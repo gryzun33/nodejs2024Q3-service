@@ -17,7 +17,7 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Artist } from './entities/artist.entity';
 
-@ApiTags('Artists')
+@ApiTags('Artist')
 @Controller('artist')
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}

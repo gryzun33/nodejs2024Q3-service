@@ -28,7 +28,6 @@ async function bootstrap() {
     .addTag('Album', 'Operations related to albums')
     .addTag('Track', 'Operations related to tracks')
     .addTag('Favorites', 'Operations related to favorites')
-    .addServer(`http://localhost:${port}`, 'Development server')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('doc', app, document);

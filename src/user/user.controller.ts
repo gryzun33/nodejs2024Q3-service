@@ -67,7 +67,7 @@ export class UserController {
   })
   @ApiResponse({ status: 400, description: 'Invalid UUID or bad input.' })
   @ApiResponse({ status: 404, description: 'User not found.' })
-  @ApiResponse({ status: 403, description: 'Oldpassword is wrong.' })
+  @ApiResponse({ status: 403, description: 'Old password is wrong.' })
   updatePassword(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,

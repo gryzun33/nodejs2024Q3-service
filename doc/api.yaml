@@ -83,7 +83,7 @@ paths:
         '400':
           description: Invalid UUID or bad input.
         '403':
-          description: Oldpassword is wrong.
+          description: Old password is wrong.
         '404':
           description: User not found.
       tags: *ref_0
@@ -121,7 +121,7 @@ paths:
         '400':
           description: Bad request. Invalid input.
       tags: &ref_1
-        - Artists
+        - Artist
     get:
       operationId: ArtistController_findAll
       summary: Get all artists
@@ -205,6 +205,7 @@ paths:
   /album:
     post:
       operationId: AlbumController_create
+      summary: Create a new album
       parameters: []
       requestBody:
         required: true
@@ -214,16 +215,33 @@ paths:
               $ref: '#/components/schemas/CreateAlbumDto'
       responses:
         '201':
-          description: ''
+          description: The album has been successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Album'
+        '400':
+          description: Bad request. Invalid input data.
+      tags: &ref_2
+        - Album
     get:
       operationId: AlbumController_findAll
+      summary: Get all albums
       parameters: []
       responses:
         '200':
-          description: ''
+          description: List of all albums
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Album'
+      tags: *ref_2
   /album/{id}:
     get:
       operationId: AlbumController_findOne
+      summary: Get a single album by ID
       parameters:
         - name: id
           required: true
@@ -232,9 +250,19 @@ paths:
             type: string
       responses:
         '200':
-          description: ''
+          description: The album was successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Album'
+        '400':
+          description: Invalid UUID format.
+        '404':
+          description: Album not found.
+      tags: *ref_2
     put:
       operationId: AlbumController_update
+      summary: Update album details
       parameters:
         - name: id
           required: true
@@ -249,9 +277,19 @@ paths:
               $ref: '#/components/schemas/UpdateAlbumDto'
       responses:
         '200':
-          description: ''
+          description: The album has been successfully updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Album'
+        '400':
+          description: Bad request. Invalid input data.
+        '404':
+          description: Album not found.
+      tags: *ref_2
     delete:
       operationId: AlbumController_remove
+      summary: Delete an album
       parameters:
         - name: id
           required: true
@@ -260,7 +298,12 @@ paths:
             type: string
       responses:
         '204':
-          description: ''
+          description: The album has been successfully deleted.
+        '400':
+          description: Invalid UUID format.
+        '404':
+          description: Album not found.
+      tags: *ref_2
   /track:
     post:
       operationId: TrackController_create
@@ -412,9 +455,7 @@ tags:
     description: Operations related to tracks
   - name: Favorites
     description: Operations related to favorites
-servers:
-  - url: http://localhost:4000
-    description: Development server
+servers: []
 components:
   schemas:
     User:
@@ -527,10 +568,67 @@ components:
         - grammy
     CreateAlbumDto:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+          description: The name of the album
+          example: In rainbows
+        year:
+          type: number
+          description: The release year of the album
+          example: 2007
+        artistId:
+          type: string
+          description: The UUID of the artist associated with the album
+          example: 550e8400-e29b-41d4-a716-446655440000
+      required:
+        - name
+        - year
+        - artistId
+    Album:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 550e8400-e29b-41d4-a716-446655440000
+          description: Unique identifier for the album
+        name:
+          type: string
+          example: In Rainbows
+          description: The name of the album
+        year:
+          type: number
+          example: 2007
+          description: The year the album was released
+        artistId:
+          type: string
+          example: 550e8400-e29b-41d4-a716-446655440000
+          description: The UUID of the artist who created the album
+          nullable: true
+      required:
+        - id
+        - name
+        - year
+        - artistId
     UpdateAlbumDto:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+          description: The name of the album
+          example: 2+2=5
+        year:
+          type: number
+          description: The release year of the album
+          example: 2003
+        artistId:
+          type: string
+          description: The UUID of the artist associated with the album
+          example: 550e8400-e29b-41d4-a716-446655440000
+      required:
+        - name
+        - year
+        - artistId
     CreateTrackDto:
       type: object
       properties: {}

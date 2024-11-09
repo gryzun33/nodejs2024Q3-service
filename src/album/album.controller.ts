@@ -14,23 +14,53 @@ import {
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import { Album } from './entities/album.entity';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Album')
 @Controller('album')
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 
   @Post()
-  create(@Body() createAlbumDto: CreateAlbumDto) {
+  @ApiOperation({ summary: 'Create a new album' })
+  @ApiResponse({
+    status: 201,
+    description: 'The album has been successfully created.',
+    type: Album,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request. Invalid input data.',
+  })
+  create(@Body() createAlbumDto: CreateAlbumDto): Album {
     return this.albumService.create(createAlbumDto);
   }
 
   @Get()
-  findAll() {
+  @ApiOperation({ summary: 'Get all albums' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of all albums',
+    type: [Album],
+  })
+  findAll(): Album[] {
     return this.albumService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+  @ApiOperation({ summary: 'Get a single album by ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'The album was successfully retrieved.',
+    type: Album,
+  })
+  @ApiResponse({ status: 400, description: 'Invalid UUID format.' })
+  @ApiResponse({
+    status: 404,
+    description: 'Album not found.',
+  })
+  findOne(@Param('id', new ParseUUIDPipe()) id: string): Album {
     const album = this.albumService.findOne(id);
     if (!album) {
       throw new NotFoundException(`Album not found.`);
@@ -39,16 +69,40 @@ export class AlbumController {
   }
 
   @Put(':id')
+  @ApiOperation({ summary: 'Update album details' })
+  @ApiResponse({
+    status: 200,
+    description: 'The album has been successfully updated.',
+    type: Album,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request. Invalid input data.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Album not found.',
+  })
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
-  ) {
+  ): Album {
     return this.albumService.update(id, updateAlbumDto);
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete an album' })
+  @ApiResponse({
+    status: 204,
+    description: 'The album has been successfully deleted.',
+  })
+  @ApiResponse({ status: 400, description: 'Invalid UUID format.' })
+  @ApiResponse({
+    status: 404,
+    description: 'Album not found.',
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
+  remove(@Param('id', new ParseUUIDPipe()) id: string): void {
     return this.albumService.remove(id);
   }
 }
