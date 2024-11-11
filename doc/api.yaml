@@ -13,7 +13,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/UserResponse'
       tags: &ref_0
         - Users
     post:
@@ -32,7 +32,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserResponse'
         '400':
           description: Bad request. Invalid input.
       tags: *ref_0
@@ -52,7 +52,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserResponse'
         '400':
           description: Invalid UUID format.
         '404':
@@ -79,7 +79,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserResponse'
         '400':
           description: Invalid UUID or bad input.
         '403':
@@ -544,7 +544,7 @@ tags:
 servers: []
 components:
   schemas:
-    User:
+    UserResponse:
       type: object
       properties:
         id:
@@ -555,10 +555,6 @@ components:
           type: string
           example: testuser
           description: The login of user
-        password:
-          type: string
-          example: password123
-          description: The password of the user
         version:
           type: number
           example: 1

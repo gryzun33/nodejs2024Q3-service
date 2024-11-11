@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, OmitType } from '@nestjs/swagger';
 
 export class User {
   @ApiProperty({
@@ -13,7 +13,7 @@ export class User {
     description: 'The password of the user',
     required: false,
   })
-  password?: string;
+  password: string;
   @ApiProperty({
     example: 1,
     description: 'The version number of the user record',
@@ -30,3 +30,5 @@ export class User {
   })
   updatedAt: number;
 }
+
+export class UserResponse extends OmitType(User, ['password'] as const) {}

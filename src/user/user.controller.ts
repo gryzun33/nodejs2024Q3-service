@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './entities/user.entity';
+import { User, UserResponse } from './entities/user.entity';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -26,9 +26,9 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved all users.',
-    type: [User],
+    type: [UserResponse],
   })
-  findAll(): User[] {
+  findAll(): UserResponse[] {
     return this.userService.findAllUsers();
   }
 
@@ -37,11 +37,11 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved the user.',
-    type: User,
+    type: UserResponse,
   })
   @ApiResponse({ status: 400, description: 'Invalid UUID format.' })
   @ApiResponse({ status: 404, description: 'User not found.' })
-  findOne(@Param('id', new ParseUUIDPipe()) id: string): User {
+  findOne(@Param('id', new ParseUUIDPipe()) id: string): UserResponse {
     return this.userService.findUserById(id);
   }
 
@@ -51,10 +51,10 @@ export class UserController {
   @ApiResponse({
     status: 201,
     description: 'User successfully created.',
-    type: User,
+    type: UserResponse,
   })
   @ApiResponse({ status: 400, description: 'Bad request. Invalid input.' })
-  create(@Body() createUserDto: CreateUserDto): User {
+  create(@Body() createUserDto: CreateUserDto): UserResponse {
     return this.userService.createUser(createUserDto);
   }
 
@@ -63,7 +63,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'Password successfully updated.',
-    type: User,
+    type: UserResponse,
   })
   @ApiResponse({ status: 400, description: 'Invalid UUID or bad input.' })
   @ApiResponse({ status: 404, description: 'User not found.' })
@@ -71,7 +71,7 @@ export class UserController {
   updatePassword(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
-  ): User {
+  ): UserResponse {
     return this.userService.updatePassword(id, updatePasswordDto);
   }
 
