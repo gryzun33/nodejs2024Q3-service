@@ -9,10 +9,12 @@ import {
   ParseUUIDPipe,
   HttpCode,
   HttpStatus,
+  BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './entities/user.entity';
+import { User, UserResponse } from './entities/user.entity';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -28,7 +30,7 @@ export class UserController {
     description: 'Successfully retrieved all users.',
     type: [User],
   })
-  findAll(): User[] {
+  async findAll(): Promise<UserResponse[]> {
     return this.userService.findAllUsers();
   }
 
@@ -41,7 +43,9 @@ export class UserController {
   })
   @ApiResponse({ status: 400, description: 'Invalid UUID format.' })
   @ApiResponse({ status: 404, description: 'User not found.' })
-  findOne(@Param('id', new ParseUUIDPipe()) id: string): User {
+  async findOne(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<UserResponse> {
     return this.userService.findUserById(id);
   }
 
@@ -54,8 +58,13 @@ export class UserController {
     type: User,
   })
   @ApiResponse({ status: 400, description: 'Bad request. Invalid input.' })
-  create(@Body() createUserDto: CreateUserDto): User {
-    return this.userService.createUser(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto): Promise<UserResponse> {
+    try {
+      return this.userService.createUser(createUserDto);
+    } catch (error) {
+      console.log('ERRRRCONTROLLER');
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Put(':id')
@@ -68,10 +77,10 @@ export class UserController {
   @ApiResponse({ status: 400, description: 'Invalid UUID or bad input.' })
   @ApiResponse({ status: 404, description: 'User not found.' })
   @ApiResponse({ status: 403, description: 'Old password is wrong.' })
-  updatePassword(
+  async updatePassword(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
-  ): User {
+  ): Promise<UserResponse> {
     return this.userService.updatePassword(id, updatePasswordDto);
   }
 
@@ -81,7 +90,13 @@ export class UserController {
   @ApiResponse({ status: 204, description: 'User successfully deleted.' })
   @ApiResponse({ status: 400, description: 'Invalid UUID.' })
   @ApiResponse({ status: 404, description: 'User not found.' })
-  deleteUser(@Param('id', new ParseUUIDPipe()) id: string): void {
-    this.userService.deleteUser(id);
+  async deleteUser(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<void> {
+    try {
+      await this.userService.deleteUser(id);
+    } catch {
+      throw new NotFoundException('User not found');
+    }
   }
 }
