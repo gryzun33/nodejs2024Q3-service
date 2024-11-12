@@ -29,7 +29,7 @@ export class ArtistController {
     description: 'The artist has been successfully created.',
   })
   @ApiResponse({ status: 400, description: 'Bad request. Invalid input.' })
-  create(@Body() createArtistDto: CreateArtistDto): Artist {
+  async create(@Body() createArtistDto: CreateArtistDto): Promise<Artist> {
     return this.artistService.create(createArtistDto);
   }
 
@@ -40,7 +40,7 @@ export class ArtistController {
     description: 'Successful operation.',
     type: [Artist],
   })
-  findAll(): Artist[] {
+  async findAll(): Promise<Artist[]> {
     return this.artistService.findAll();
   }
 
@@ -53,8 +53,8 @@ export class ArtistController {
   })
   @ApiResponse({ status: 400, description: 'Bad request. Invalid UUID.' })
   @ApiResponse({ status: 404, description: 'Artist not found.' })
-  findOne(@Param('id', new ParseUUIDPipe()) id: string): Artist {
-    const artist = this.artistService.findOne(id);
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<Artist> {
+    const artist = await this.artistService.findOne(id);
     if (!artist) {
       throw new NotFoundException('Artist not found.');
     }
@@ -73,10 +73,10 @@ export class ArtistController {
     description: 'Bad request. Invalid UUID or input.',
   })
   @ApiResponse({ status: 404, description: 'Artist not found.' })
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateArtistDto: UpdateArtistDto,
-  ): Artist {
+  ): Promise<Artist> {
     return this.artistService.update(id, updateArtistDto);
   }
 
@@ -89,7 +89,7 @@ export class ArtistController {
   })
   @ApiResponse({ status: 400, description: 'Bad request. Invalid UUID.' })
   @ApiResponse({ status: 404, description: 'Artist not found.' })
-  remove(@Param('id', new ParseUUIDPipe()) id: string): void {
+  async remove(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
     return this.artistService.remove(id);
   }
 }
