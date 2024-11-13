@@ -17,7 +17,6 @@ export class FavoritesService {
   public favArtists: Set<string> = new Set();
   public favAlbums: Set<string> = new Set();
   public favTracks: Set<string> = new Set();
-
   // constructor(
   // @Inject(forwardRef(() => ArtistService))
   // private readonly artistService: ArtistService,
@@ -39,21 +38,33 @@ export class FavoritesService {
   ) {}
 
   async getFavorites(): Promise<FavoritesResponse> {
-    const favorites = await this.prisma.favorites.findMany({
-      include: {
-        artist: true,
-        album: true,
-        track: true,
-      },
-    });
+    const [favoriteArtists, favoriteAlbums, favoriteTracks] = await Promise.all(
+      [
+        this.prisma.favoriteArtist.findMany({
+          include: {
+            artist: true,
+          },
+        }),
+        this.prisma.favoriteAlbum.findMany({
+          include: {
+            album: true,
+          },
+        }),
+        this.prisma.favoriteTrack.findMany({
+          include: {
+            track: true,
+          },
+        }),
+      ],
+    );
 
-    const artists = favorites
+    const artists = favoriteArtists
       .map((fav) => fav.artist)
       .filter((artist) => artist !== null);
-    const albums = favorites
+    const albums = favoriteAlbums
       .map((fav) => fav.album)
       .filter((album) => album !== null);
-    const tracks = favorites
+    const tracks = favoriteTracks
       .map((fav) => fav.track)
       .filter((track) => track !== null);
 
@@ -72,7 +83,7 @@ export class FavoritesService {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-    await this.prisma.favorites.create({
+    await this.prisma.favoriteArtist.create({
       data: {
         artistId: id,
       },
@@ -87,7 +98,7 @@ export class FavoritesService {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-    await this.prisma.favorites.create({
+    await this.prisma.favoriteAlbum.create({
       data: {
         albumId: id,
       },
@@ -102,7 +113,7 @@ export class FavoritesService {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-    await this.prisma.favorites.create({
+    await this.prisma.favoriteTrack.create({
       data: {
         trackId: id,
       },
@@ -124,7 +135,7 @@ export class FavoritesService {
   }
 
   async removeTrack(trackId: string): Promise<void> {
-    const favorite = await this.prisma.favorites.findUnique({
+    const favorite = await this.prisma.favoriteTrack.findUnique({
       where: {
         trackId: trackId,
       },
@@ -134,7 +145,7 @@ export class FavoritesService {
       throw new NotFoundException('Track not found in favorites');
     }
 
-    await this.prisma.favorites.delete({
+    await this.prisma.favoriteTrack.delete({
       where: {
         trackId: trackId,
       },

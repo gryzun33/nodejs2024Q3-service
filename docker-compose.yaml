@@ -1,0 +1,41 @@
+services:
+  db:
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123321
+      POSTGRES_DB: musiclibrarydb
+    ports:
+      - '5432:5432'
+    networks:
+      - app-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: node_app
+    ports:
+      - '4000:4000'
+    depends_on:
+      - db
+    environment:
+      PORT: 4000
+      DATABASE_URL: postgresql://postgres:123321@postgres_db:5432/musiclibrarydb?schema=public
+    networks:
+      - app-network
+    volumes:
+      - app_data:/usr/src/app
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  app_data:
