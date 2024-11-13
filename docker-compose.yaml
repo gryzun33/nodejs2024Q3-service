@@ -4,6 +4,7 @@ services:
       context: ./db
       dockerfile: Dockerfile
     container_name: postgres_db
+    image: gryzun33/library-db:latest
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123321
@@ -14,11 +15,13 @@ services:
       - app-network
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: always
 
   app:
     build:
       context: .
       dockerfile: Dockerfile
+    image: gryzun33/library-app:latest
     container_name: node_app
     ports:
       - '4000:4000'
@@ -29,8 +32,8 @@ services:
       DATABASE_URL: postgresql://postgres:123321@postgres_db:5432/musiclibrarydb?schema=public
     networks:
       - app-network
-    volumes:
-      - app_data:/usr/src/app
+    restart: always
+    entrypoint: ['sh', '-c', 'npx prisma migrate deploy && npm run start']
 
 networks:
   app-network:
@@ -38,4 +41,3 @@ networks:
 
 volumes:
   postgres_data:
-  app_data:
