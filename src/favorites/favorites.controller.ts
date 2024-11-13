@@ -24,7 +24,7 @@ export class FavoritesController {
     description: 'Successfully retrieved all favorite items',
     type: FavoritesResponse,
   })
-  getFavorites(): FavoritesResponse {
+  async getFavorites(): Promise<FavoritesResponse> {
     return this.favoritesService.getFavorites();
   }
 
@@ -42,8 +42,10 @@ export class FavoritesController {
     status: 422,
     description: `Artist not found.`,
   })
-  addArtistToFavorites(@Param('id', new ParseUUIDPipe()) id: string): void {
-    this.favoritesService.addArtist(id);
+  async addArtistToFavorites(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<void> {
+    await this.favoritesService.addArtist(id);
   }
 
   @Post('album/:id')
