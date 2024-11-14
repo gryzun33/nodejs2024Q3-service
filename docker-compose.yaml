@@ -4,7 +4,7 @@ services:
       context: ./db
       dockerfile: Dockerfile
     container_name: postgres_db
-    image: gryzun33/library-db:latest
+    image: volha564/library-db:latest
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123321
@@ -21,7 +21,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: gryzun33/library-app:latest
+    image: volha564/library-app:latest
     container_name: node_app
     ports:
       - '4000:4000'
