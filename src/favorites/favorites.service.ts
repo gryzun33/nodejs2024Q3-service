@@ -111,18 +111,40 @@ export class FavoritesService {
     });
   }
 
-  removeArtist(id: string): void {
-    if (!this.favArtists.has(id)) {
+  async removeArtist(id: string): Promise<void> {
+    const favoriteArtist = await this.prisma.favoriteArtist.findUnique({
+      where: {
+        artistId: id,
+      },
+    });
+
+    if (!favoriteArtist) {
       throw new NotFoundException(`Artist with id ${id} not in favorites`);
     }
-    this.favArtists.delete(id);
+
+    await this.prisma.favoriteArtist.delete({
+      where: {
+        artistId: id,
+      },
+    });
   }
 
-  removeAlbum(id: string): void {
-    if (!this.favAlbums.has(id)) {
+  async removeAlbum(id: string): Promise<void> {
+    const favoriteAlbum = await this.prisma.favoriteAlbum.findUnique({
+      where: {
+        albumId: id,
+      },
+    });
+
+    if (!favoriteAlbum) {
       throw new NotFoundException(`Album with id ${id} not in favorites`);
     }
-    this.favAlbums.delete(id);
+
+    await this.prisma.favoriteAlbum.delete({
+      where: {
+        albumId: id,
+      },
+    });
   }
 
   async removeTrack(trackId: string): Promise<void> {
