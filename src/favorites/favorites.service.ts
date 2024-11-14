@@ -17,15 +17,6 @@ export class FavoritesService {
   public favArtists: Set<string> = new Set();
   public favAlbums: Set<string> = new Set();
   public favTracks: Set<string> = new Set();
-  // constructor(
-  // @Inject(forwardRef(() => ArtistService))
-  // private readonly artistService: ArtistService,
-  // @Inject(forwardRef(() => AlbumService))
-  // private readonly albumService: AlbumService,
-  // @Inject(forwardRef(() => TrackService))
-  // private readonly trackService: TrackService,
-
-  // ) {}
 
   constructor(
     private readonly prisma: PrismaService,

@@ -83,12 +83,5 @@ export class ArtistService {
     await this.prisma.artist.delete({
       where: { id },
     });
-
-    // await this.albumService.updateArtistIdToNull(id);
-    // await this.trackService.updateArtistIdToNull(id);
-
-    // if (await this.favoritesService.isArtistInFavorites(id)) {
-    //   await this.favoritesService.removeArtist(id);
-    // }
   }
 }

@@ -33,7 +33,7 @@ export class TrackController {
     status: 400,
     description: 'Bad request. Invalid input data.',
   })
-  create(@Body() createTrackDto: CreateTrackDto): Track {
+  async create(@Body() createTrackDto: CreateTrackDto): Promise<Track> {
     return this.trackService.create(createTrackDto);
   }
 
@@ -44,7 +44,7 @@ export class TrackController {
     description: 'List of all tracks',
     type: [Track],
   })
-  findAll(): Track[] {
+  async findAll(): Promise<Track[]> {
     return this.trackService.findAll();
   }
 
@@ -60,7 +60,7 @@ export class TrackController {
     status: 404,
     description: 'Track not found.',
   })
-  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<Track> {
     const track = this.trackService.findOne(id);
     if (!track) {
       throw new NotFoundException(`Track not found.`);
@@ -83,10 +83,10 @@ export class TrackController {
     status: 404,
     description: 'Track not found.',
   })
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateTrackDto: UpdateTrackDto,
-  ) {
+  ): Promise<Track> {
     return this.trackService.update(id, updateTrackDto);
   }
 
@@ -102,7 +102,7 @@ export class TrackController {
     description: 'Track not found.',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.trackService.remove(id);
+  async remove(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
+    await this.trackService.remove(id);
   }
 }

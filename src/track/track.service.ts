@@ -7,80 +7,94 @@ import {
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { Track } from './entities/track.entity';
+// import { Track } from './entities/track.entity';
 import { FavoritesService } from 'src/favorites/favorites.service';
+import { PrismaService } from 'src/prisma.service';
+import { Track } from '@prisma/client';
 
 @Injectable()
 export class TrackService {
-  private tracks: Map<string, Track> = new Map();
+  constructor(private readonly prisma: PrismaService) {}
 
-  constructor(
-    @Inject(forwardRef(() => FavoritesService))
-    private readonly favoritesService: FavoritesService,
-  ) {}
-
-  create(createTrackDto: CreateTrackDto): Track {
-    const newTrack: Track = {
-      id: uuidv4(),
-      name: createTrackDto.name,
-      duration: createTrackDto.duration,
-      albumId: createTrackDto.albumId,
-      artistId: createTrackDto.artistId,
-    };
-
-    this.tracks.set(newTrack.id, newTrack);
-    return newTrack;
+  async create(createTrackDto: CreateTrackDto): Promise<Track> {
+    return this.prisma.track.create({
+      data: {
+        name: createTrackDto.name,
+        duration: createTrackDto.duration,
+        albumId: createTrackDto.albumId,
+        artistId: createTrackDto.artistId,
+      },
+    });
   }
 
-  findAll(): Track[] {
-    return Array.from(this.tracks.values());
+  async findAll(): Promise<Track[]> {
+    return this.prisma.track.findMany();
   }
 
-  findOne(id: string): Track {
-    return this.tracks.get(id);
-  }
+  async findOne(id: string): Promise<Track> {
+    const track = await this.prisma.track.findUnique({
+      where: { id },
+    });
 
-  update(id: string, updateTrackDto: UpdateTrackDto): Track {
-    const track = this.tracks.get(id);
     if (!track) {
-      throw new NotFoundException(`Track not found.`);
+      throw new NotFoundException(`Track with id ${id} not found.`);
     }
-    track.name = updateTrackDto.name;
-    track.duration = updateTrackDto.duration;
-    track.albumId = updateTrackDto.albumId;
-    track.artistId = updateTrackDto.artistId;
+
     return track;
   }
 
-  remove(id: string): void {
-    const result = this.tracks.delete(id);
-    if (!result) {
-      throw new NotFoundException('Track not found');
-    }
-    if (this.favoritesService.favTracks.has(id)) {
-      this.favoritesService.removeTrack(id);
-    }
-  }
+  async update(id: string, updateTrackDto: UpdateTrackDto): Promise<Track> {
+    const track = await this.prisma.track.findUnique({
+      where: { id },
+    });
 
-  updateAlbumIdToNull(albumId: string) {
-    const tracks = Array.from(this.tracks.values()).filter(
-      (track: Track) => track.albumId === albumId,
-    );
-    tracks.forEach((track: Track) => {
-      track.albumId = null;
-      this.tracks.set(track.id, track);
-      // console.log(`Updated track ${track.id} with albumId: null`);
+    if (!track) {
+      throw new NotFoundException(`Track with id ${id} not found.`);
+    }
+
+    return this.prisma.track.update({
+      where: { id },
+      data: {
+        name: updateTrackDto.name,
+        duration: updateTrackDto.duration,
+        albumId: updateTrackDto.albumId,
+        artistId: updateTrackDto.artistId,
+      },
     });
   }
 
-  updateArtistIdToNull(artistId: string) {
-    const tracks = Array.from(this.tracks.values()).filter(
-      (track: Track) => track.artistId === artistId,
-    );
-    tracks.forEach((track: Track) => {
-      track.artistId = null;
-      this.tracks.set(track.id, track);
-      // console.log(`Updated track ${track.id} with artistId: null`);
+  async remove(id: string) {
+    const track = await this.prisma.track.findUnique({
+      where: { id },
+    });
+
+    if (!track) {
+      throw new NotFoundException('Track not found.');
+    }
+
+    await this.prisma.track.delete({
+      where: { id },
     });
   }
+  // updateAlbumIdToNull(albumId: string) {
+  //   const tracks = Array.from(this.tracks.values()).filter(
+  //     (track: Track) => track.albumId === albumId,
+  //   );
+  //   tracks.forEach((track: Track) => {
+  //     track.albumId = null;
+  //     this.tracks.set(track.id, track);
+  //     // console.log(`Updated track ${track.id} with albumId: null`);
+  //   });
+  // }
+
+  // updateArtistIdToNull(artistId: string) {
+  //   const tracks = Array.from(this.tracks.values()).filter(
+  //     (track: Track) => track.artistId === artistId,
+  //   );
+  //   tracks.forEach((track: Track) => {
+  //     track.artistId = null;
+  //     this.tracks.set(track.id, track);
+  //     // console.log(`Updated track ${track.id} with artistId: null`);
+  //   });
+  // }
 }
