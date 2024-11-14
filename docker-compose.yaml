@@ -5,10 +5,6 @@ services:
       dockerfile: Dockerfile
     container_name: postgres_db
     image: volha564/library-db:latest
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123321
-      POSTGRES_DB: musiclibrarydb
     ports:
       - '5432:5432'
     networks:
@@ -28,9 +24,6 @@ services:
       - '4000:4000'
     depends_on:
       - db
-    environment:
-      PORT: 4000
-      DATABASE_URL: postgresql://postgres:123321@postgres_db:5432/musiclibrarydb?schema=public
     networks:
       - app-network
     restart: always
