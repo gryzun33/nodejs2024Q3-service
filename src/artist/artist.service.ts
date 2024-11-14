@@ -46,9 +46,9 @@ export class ArtistService {
       where: { id },
     });
 
-    if (!artist) {
-      throw new NotFoundException(`Artist with id ${id} not found`);
-    }
+    // if (!artist) {
+    //   throw new NotFoundException(`Artist with id ${id} not found`);
+    // }
 
     return artist;
   }

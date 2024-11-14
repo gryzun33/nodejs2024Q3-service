@@ -60,8 +60,8 @@ export class AlbumController {
     status: 404,
     description: 'Album not found.',
   })
-  async indOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<Album> {
-    const album = this.albumService.findOne(id);
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<Album> {
+    const album = await this.albumService.findOne(id);
     if (!album) {
       throw new NotFoundException(`Album not found.`);
     }

@@ -5,6 +5,7 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { AlbumService } from 'src/album/album.service';
 import { ArtistService } from 'src/artist/artist.service';
@@ -69,9 +70,12 @@ export class FavoritesService {
   async addArtist(id: string): Promise<void> {
     const artist = await this.artistService.findOne(id);
     if (!artist) {
-      throw new HttpException(
+      // throw new HttpException(
+      //   `Artist with id ${id} doesn't exist`,
+      //   HttpStatus.UNPROCESSABLE_ENTITY,
+      // );
+      throw new UnprocessableEntityException(
         `Artist with id ${id} doesn't exist`,
-        HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
     await this.prisma.favoriteArtist.create({
@@ -84,9 +88,12 @@ export class FavoritesService {
   async addAlbum(id: string): Promise<void> {
     const album = await this.albumService.findOne(id);
     if (!album) {
-      throw new HttpException(
+      // throw new HttpException(
+      //   `Album with id ${id} doesn't exist`,
+      //   HttpStatus.UNPROCESSABLE_ENTITY,
+      // );
+      throw new UnprocessableEntityException(
         `Album with id ${id} doesn't exist`,
-        HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
     await this.prisma.favoriteAlbum.create({
@@ -99,9 +106,12 @@ export class FavoritesService {
   async addTrack(id: string): Promise<void> {
     const track = await this.trackService.findOne(id);
     if (!track) {
-      throw new HttpException(
+      // throw new HttpException(
+      //   `Track with id ${id} doesn't exist`,
+      //   HttpStatus.UNPROCESSABLE_ENTITY,
+      // );
+      throw new UnprocessableEntityException(
         `Track with id ${id} doesn't exist`,
-        HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
     await this.prisma.favoriteTrack.create({
