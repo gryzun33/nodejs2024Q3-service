@@ -15,6 +15,7 @@ services:
       - app-network
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - postgers_logs:/var/log/postgresql
     restart: always
 
   app:
@@ -41,3 +42,4 @@ networks:
 
 volumes:
   postgres_data:
+  postgers_logs:
