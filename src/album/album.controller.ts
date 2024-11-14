@@ -33,7 +33,7 @@ export class AlbumController {
     status: 400,
     description: 'Bad request. Invalid input data.',
   })
-  create(@Body() createAlbumDto: CreateAlbumDto): Album {
+  async create(@Body() createAlbumDto: CreateAlbumDto): Promise<Album> {
     return this.albumService.create(createAlbumDto);
   }
 
@@ -44,7 +44,7 @@ export class AlbumController {
     description: 'List of all albums',
     type: [Album],
   })
-  findAll(): Album[] {
+  async findAll(): Promise<Album[]> {
     return this.albumService.findAll();
   }
 
@@ -60,7 +60,7 @@ export class AlbumController {
     status: 404,
     description: 'Album not found.',
   })
-  findOne(@Param('id', new ParseUUIDPipe()) id: string): Album {
+  async indOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<Album> {
     const album = this.albumService.findOne(id);
     if (!album) {
       throw new NotFoundException(`Album not found.`);
@@ -83,10 +83,10 @@ export class AlbumController {
     status: 404,
     description: 'Album not found.',
   })
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
-  ): Album {
+  ): Promise<Album> {
     return this.albumService.update(id, updateAlbumDto);
   }
 
@@ -102,7 +102,7 @@ export class AlbumController {
     description: 'Album not found.',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', new ParseUUIDPipe()) id: string): void {
+  async remove(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
     return this.albumService.remove(id);
   }
 }
