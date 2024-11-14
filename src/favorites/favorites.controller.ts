@@ -62,8 +62,10 @@ export class FavoritesController {
     status: 422,
     description: `Album not found.`,
   })
-  addAlbumToFavorites(@Param('id', new ParseUUIDPipe()) id: string): void {
-    this.favoritesService.addAlbum(id);
+  async addAlbumToFavorites(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<void> {
+    await this.favoritesService.addAlbum(id);
   }
 
   @Post('track/:id')
@@ -80,8 +82,10 @@ export class FavoritesController {
     status: 422,
     description: `Track not found.`,
   })
-  addTrackToFavorites(@Param('id', new ParseUUIDPipe()) id: string): void {
-    this.favoritesService.addTrack(id);
+  async addTrackToFavorites(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<void> {
+    await this.favoritesService.addTrack(id);
   }
 
   @Delete('artist/:id')
@@ -99,10 +103,10 @@ export class FavoritesController {
     status: 404,
     description: 'Artist is not favorite.',
   })
-  removeArtistFromFavorites(
+  async removeArtistFromFavorites(
     @Param('id', new ParseUUIDPipe()) id: string,
-  ): void {
-    this.favoritesService.removeArtist(id);
+  ): Promise<void> {
+    await this.favoritesService.removeArtist(id);
   }
 
   @Delete('album/:id')
@@ -120,8 +124,10 @@ export class FavoritesController {
     status: 404,
     description: 'Album is not favorite.',
   })
-  removeAlbumFromFavorites(@Param('id', new ParseUUIDPipe()) id: string): void {
-    this.favoritesService.removeAlbum(id);
+  async removeAlbumFromFavorites(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<void> {
+    await this.favoritesService.removeAlbum(id);
   }
 
   @Delete('track/:id')
@@ -139,7 +145,9 @@ export class FavoritesController {
     status: 404,
     description: 'Track is not favorite.',
   })
-  removeTrackFromFavorites(@Param('id', new ParseUUIDPipe()) id: string): void {
-    this.favoritesService.removeTrack(id);
+  async removeTrackFromFavorites(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<void> {
+    await this.favoritesService.removeTrack(id);
   }
 }
