@@ -36,6 +36,6 @@ async function bootstrap() {
   fs.writeFileSync(filePath, yamlDocument, 'utf8');
 
   await app.listen(port);
-  console.log(`Application is running on: http://localhost:${port}`);
+  console.log(`Application is running`);
 }
 bootstrap();
