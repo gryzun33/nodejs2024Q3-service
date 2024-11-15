@@ -11,7 +11,7 @@ services:
       - app-network
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - postgers_logs:/var/log/postgresql
+      - postgres_logs:/var/log/postgresql
     restart: always
 
   app:
@@ -26,6 +26,10 @@ services:
       - db
     networks:
       - app-network
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - app_logs:/app/logs
     restart: always
     entrypoint: ['sh', '-c', 'npx prisma migrate deploy && npm run start']
 
@@ -35,4 +39,5 @@ networks:
 
 volumes:
   postgres_data:
-  postgers_logs:
+  postgres_logs:
+  app_logs:
