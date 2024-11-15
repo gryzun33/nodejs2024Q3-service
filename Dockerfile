@@ -7,7 +7,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm install && npm cache clean --force
 
 COPY . .
 
@@ -15,6 +15,4 @@ EXPOSE 4000
 
 RUN npx prisma generate
 
-
-
-CMD ["npm","run", "start"]
+CMD ["npm","run", "start:dev"]
