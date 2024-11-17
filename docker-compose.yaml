@@ -6,32 +6,30 @@ services:
     container_name: postgres_db
     image: volha564/library-db:latest
     ports:
-      - '5432:5432'
+      - '${DB_PORT}:${DB_PORT}'
     networks:
       - app-network
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - postgres_logs:/var/log/postgresql
-    restart: always
+    restart: on-failure
 
   app:
     build:
       context: .
       dockerfile: Dockerfile
+      target: development
     image: volha564/library-app:latest
     container_name: node_app
     ports:
-      - '4000:4000'
+      - '${PORT}:${PORT}'
     depends_on:
       - db
     networks:
       - app-network
-    volumes:
-      - .:/app
-      - /app/node_modules
-      - app_logs:/app/logs
-    restart: always
-    entrypoint: ['sh', '-c', 'npx prisma migrate deploy && npm run start:dev']
+    env_file: '.env'
+    restart: on-failure
+    command: ['sh', '-c', 'npx prisma migrate deploy && npm run start']
 
 networks:
   app-network:
@@ -40,4 +38,3 @@ networks:
 volumes:
   postgres_data:
   postgres_logs:
-  app_logs:

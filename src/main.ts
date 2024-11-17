@@ -37,5 +37,12 @@ async function bootstrap() {
 
   await app.listen(port);
   console.log(`Application is running`);
+
+  // to check app crashing
+
+  // setTimeout(() => {
+  //   console.log('Simulating crash...');
+  //   process.exit(1);
+  // }, 5000);
 }
 bootstrap();
