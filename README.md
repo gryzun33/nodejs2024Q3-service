@@ -1,6 +1,6 @@
 # Home Library Service
 
-## Downloading
+### Downloading
 
 Clone the project
 
@@ -9,38 +9,44 @@ git clone https://github.com/gryzun33/nodejs2024Q3-service.git
 
 ```
 
-Switch to branch `develop`
+Switch to branch `part2`
 
 ```
-git checkout develop
+git checkout part2
 ```
 
-## Installing NPM modules
+### Installing NPM modules
 
 ```
 npm install
 ```
 
-## Running application
+### Build images
 
 ```
-npm start
+docker-compose build --no-cache
 ```
 
-## Testing
+### Run application in containers
+
+```
+docker-compose up
+```
+
+### To scan images for vulnerabilities
+
+```
+npm run scan:app
+
+npm run scan:db
+```
+
+### Testing
 
 After application running open new terminal and enter:
 
-To run all tests without authorization
-
 ```
 npm run test
-```
-
-To run only one of all test suites
-
-```
-npm run test -- <path to suite>
 ```
 
 ### Auto-fix and format
@@ -56,3 +62,9 @@ npm run format
 ### How to use
 
 After starting the app you can open in your browser OpenAPI documentation by typing http://localhost:4000/doc/ and try making requests
+
+### Links to images
+
+https://hub.docker.com/repository/docker/volha564/library-app/general
+
+https://hub.docker.com/repository/docker/volha564/library-db/general
