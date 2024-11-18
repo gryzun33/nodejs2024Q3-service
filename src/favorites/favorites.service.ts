@@ -1,7 +1,5 @@
 import {
   forwardRef,
-  HttpException,
-  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -15,10 +13,6 @@ import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class FavoritesService {
-  public favArtists: Set<string> = new Set();
-  public favAlbums: Set<string> = new Set();
-  public favTracks: Set<string> = new Set();
-
   constructor(
     private readonly prisma: PrismaService,
     @Inject(forwardRef(() => ArtistService))
@@ -70,10 +64,6 @@ export class FavoritesService {
   async addArtist(id: string): Promise<void> {
     const artist = await this.artistService.findOne(id);
     if (!artist) {
-      // throw new HttpException(
-      //   `Artist with id ${id} doesn't exist`,
-      //   HttpStatus.UNPROCESSABLE_ENTITY,
-      // );
       throw new UnprocessableEntityException(
         `Artist with id ${id} doesn't exist`,
       );
@@ -88,10 +78,6 @@ export class FavoritesService {
   async addAlbum(id: string): Promise<void> {
     const album = await this.albumService.findOne(id);
     if (!album) {
-      // throw new HttpException(
-      //   `Album with id ${id} doesn't exist`,
-      //   HttpStatus.UNPROCESSABLE_ENTITY,
-      // );
       throw new UnprocessableEntityException(
         `Album with id ${id} doesn't exist`,
       );
@@ -106,10 +92,6 @@ export class FavoritesService {
   async addTrack(id: string): Promise<void> {
     const track = await this.trackService.findOne(id);
     if (!track) {
-      // throw new HttpException(
-      //   `Track with id ${id} doesn't exist`,
-      //   HttpStatus.UNPROCESSABLE_ENTITY,
-      // );
       throw new UnprocessableEntityException(
         `Track with id ${id} doesn't exist`,
       );

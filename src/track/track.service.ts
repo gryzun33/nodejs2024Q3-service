@@ -1,14 +1,6 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import { v4 as uuidv4 } from 'uuid';
-// import { Track } from './entities/track.entity';
-import { FavoritesService } from 'src/favorites/favorites.service';
 import { PrismaService } from 'src/prisma.service';
 import { Track } from '@prisma/client';
 
@@ -35,10 +27,6 @@ export class TrackService {
     const track = await this.prisma.track.findUnique({
       where: { id },
     });
-
-    // if (!track) {
-    //   throw new NotFoundException(`Track with id ${id} not found.`);
-    // }
 
     return track;
   }
@@ -76,25 +64,4 @@ export class TrackService {
       where: { id },
     });
   }
-  // updateAlbumIdToNull(albumId: string) {
-  //   const tracks = Array.from(this.tracks.values()).filter(
-  //     (track: Track) => track.albumId === albumId,
-  //   );
-  //   tracks.forEach((track: Track) => {
-  //     track.albumId = null;
-  //     this.tracks.set(track.id, track);
-  //     // console.log(`Updated track ${track.id} with albumId: null`);
-  //   });
-  // }
-
-  // updateArtistIdToNull(artistId: string) {
-  //   const tracks = Array.from(this.tracks.values()).filter(
-  //     (track: Track) => track.artistId === artistId,
-  //   );
-  //   tracks.forEach((track: Track) => {
-  //     track.artistId = null;
-  //     this.tracks.set(track.id, track);
-  //     // console.log(`Updated track ${track.id} with artistId: null`);
-  //   });
-  // }
 }

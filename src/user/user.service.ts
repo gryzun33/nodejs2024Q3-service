@@ -1,15 +1,11 @@
 import {
-  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { User } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
-// import { v4 as uuidv4 } from 'uuid';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { PrismaService } from 'src/prisma.service';
 import { UserRepository } from './user.repository';
 import { UserResponse } from './entities/user.entity';
 
