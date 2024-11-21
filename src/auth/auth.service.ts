@@ -1,9 +1,13 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { UserLogin } from 'src/user/entities/user.entity';
+import { UserAccess, UserLogin } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -41,7 +45,7 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  generateAccessToken(user: UserLogin): string {
+  generateAccessToken(user: UserAccess): string {
     const secret = this.configService.get<string>('JWT_SECRET_KEY');
     const expiresIn = this.configService.get<string>('TOKEN_EXPIRE_TIME');
 
@@ -51,7 +55,7 @@ export class AuthService {
     );
   }
 
-  generateRefreshToken(user: UserLogin): string {
+  generateRefreshToken(user: UserAccess): string {
     const refreshSecret = this.configService.get<string>(
       'JWT_SECRET_REFRESH_KEY',
     );
@@ -63,6 +67,29 @@ export class AuthService {
       { userId: user.id, login: user.login },
       { secret: refreshSecret, expiresIn },
     );
+  }
+
+  async refresh(
+    refreshToken: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token is required');
+    }
+
+    try {
+      const decoded = this.jwtService.verify(refreshToken, {
+        secret: this.configService.get<string>('JWT_SECRET_REFRESH_KEY'),
+      });
+
+      const user = { id: decoded.userId, login: decoded.login };
+
+      const newAccessToken = this.generateAccessToken(user);
+      const newRefreshToken = this.generateRefreshToken(user);
+
+      return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+    } catch (error) {
+      throw new ForbiddenException('Refresh token is invalid or expired');
+    }
   }
 
   async hashPassword(password: string): Promise<string> {

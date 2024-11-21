@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDefined, IsString } from 'class-validator';
 
-export class CreateUserDto {
+export class LoginUserDto {
   @ApiProperty({
     example: 'testuser',
     description: 'The login of the user',

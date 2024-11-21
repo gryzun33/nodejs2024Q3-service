@@ -34,3 +34,5 @@ export class User {
 export class UserResponse extends OmitType(User, ['password'] as const) {}
 
 export type UserLogin = Omit<User, 'version' | 'createdAt' | 'updatedAt'>;
+
+export type UserAccess = Omit<UserLogin, 'password'>;
