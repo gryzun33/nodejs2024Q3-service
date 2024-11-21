@@ -1,4 +1,72 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { UserService } from 'src/user/user.service';
+import * as bcrypt from 'bcrypt';
+import { ConfigService } from '@nestjs/config';
+import { UserLogin } from 'src/user/entities/user.entity';
 
 @Injectable()
-export class AuthService {}
+export class AuthService {
+  constructor(
+    private userService: UserService,
+    private jwtService: JwtService,
+    private configService: ConfigService,
+  ) {}
+
+  async signup(login: string, password: string): Promise<void> {
+    const hashedPassword = await this.hashPassword(password);
+    const createUserDto = {
+      login,
+      password: hashedPassword,
+    };
+
+    await this.userService.createUser(createUserDto);
+  }
+
+  async login(login: string, password: string): Promise<any> {
+    const user = await this.userService.getUserByLogin(login);
+
+    if (!user) {
+      throw new ForbiddenException('Authentication failed');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new ForbiddenException('Authentication failed');
+    }
+
+    const accessToken = this.generateAccessToken(user);
+    const refreshToken = this.generateRefreshToken(user);
+
+    return { accessToken, refreshToken };
+  }
+
+  generateAccessToken(user: UserLogin): string {
+    const secret = this.configService.get<string>('JWT_SECRET_KEY');
+    const expiresIn = this.configService.get<string>('TOKEN_EXPIRE_TIME');
+
+    return this.jwtService.sign(
+      { userId: user.id, login: user.login },
+      { secret, expiresIn },
+    );
+  }
+
+  generateRefreshToken(user: UserLogin): string {
+    const refreshSecret = this.configService.get<string>(
+      'JWT_SECRET_REFRESH_KEY',
+    );
+    const expiresIn = this.configService.get<string>(
+      'TOKEN_REFRESH_EXPIRE_TIME',
+    );
+
+    return this.jwtService.sign(
+      { userId: user.id, login: user.login },
+      { secret: refreshSecret, expiresIn },
+    );
+  }
+
+  async hashPassword(password: string): Promise<string> {
+    const saltRounds = this.configService.get<number>('CRYPT_SALT');
+    return await bcrypt.hash(password, saltRounds);
+  }
+}

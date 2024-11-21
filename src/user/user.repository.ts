@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from '@prisma/client';
 import { UpdatedData } from './interfaces/updatedData';
+import { UserLogin } from './entities/user.entity';
 
 @Injectable()
 export class UserRepository {
@@ -111,5 +112,18 @@ export class UserRepository {
         throw new NotFoundException('User not found');
       }
     }
+  }
+
+  async getUserByLogin(login: string): Promise<UserLogin> {
+    return await this.prisma.user.findUnique({
+      where: {
+        login,
+      },
+      select: {
+        id: true,
+        login: true,
+        password: true,
+      },
+    });
   }
 }

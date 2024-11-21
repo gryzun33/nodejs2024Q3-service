@@ -7,7 +7,7 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UserRepository } from './user.repository';
-import { UserResponse } from './entities/user.entity';
+import { User, UserLogin, UserResponse } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -23,7 +23,7 @@ export class UserService {
       };
       return userResponse;
     } catch (error) {
-      console.log('ERRRRSERVICE');
+      // console.log('ERRRRSERVICE');
       throw new ConflictException(error.message);
     }
   }
@@ -90,5 +90,9 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
     await this.userRepository.delete(id);
+  }
+
+  async getUserByLogin(login: string): Promise<UserLogin> {
+    return await this.userRepository.getUserByLogin(login);
   }
 }
