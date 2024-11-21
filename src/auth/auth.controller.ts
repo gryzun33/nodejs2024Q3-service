@@ -1,4 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UnauthorizedException,
+  Headers,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from 'src/user/dto/login-user.dto';
 
@@ -21,9 +27,21 @@ export class AuthController {
   }
 
   @Post('refresh')
-  async refresh(@Body() body: { refreshToken: string }) {
-    const { refreshToken } = body;
+  async refresh(@Headers('authorization') authHeader: string) {
+    if (!authHeader) {
+      throw new UnauthorizedException('Authorization header is missing');
+    }
+
+    const [scheme, refreshToken] = authHeader.split(' ');
+
+    if (scheme !== 'Bearer' || !refreshToken) {
+      throw new UnauthorizedException(
+        'Authorization header is invalid or does not follow Bearer scheme',
+      );
+    }
+
     const tokens = await this.authService.refresh(refreshToken);
+
     return tokens;
   }
 }
