@@ -6,7 +6,7 @@ COPY --chown=node:node package*.json ./
 RUN npm ci && npm cache clean --force
 COPY --chown=node:node . .
 RUN npx prisma generate
-USER node
+# USER node
 
 
 FROM node:22-alpine AS build

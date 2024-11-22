@@ -94,6 +94,9 @@ export class AuthService {
 
   async hashPassword(password: string): Promise<string> {
     const saltRounds = this.configService.get<number>('CRYPT_SALT');
-    return await bcrypt.hash(password, saltRounds);
+    console.log('type=', typeof saltRounds);
+    console.log('salt=', saltRounds);
+    const salt = await bcrypt.genSalt(Number(saltRounds));
+    return await bcrypt.hash(password, salt);
   }
 }
