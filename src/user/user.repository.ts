@@ -24,7 +24,6 @@ export class UserRepository {
           updatedAt: true,
         },
       });
-
       return user;
     } catch (error) {
       if (error.code === 'P2002') {
@@ -115,7 +114,7 @@ export class UserRepository {
   }
 
   async getUserByLogin(login: string): Promise<UserLogin> {
-    return await this.prisma.user.findUnique({
+    return await this.prisma.user.findFirst({
       where: {
         login,
       },

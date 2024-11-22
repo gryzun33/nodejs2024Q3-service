@@ -525,6 +525,44 @@ paths:
         '404':
           description: Track is not favorite.
       tags: *ref_4
+  /auth/signup:
+    post:
+      operationId: AuthController_signup
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUserDto'
+      responses:
+        '201':
+          description: ''
+  /auth/login:
+    post:
+      operationId: AuthController_login
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUserDto'
+      responses:
+        '201':
+          description: ''
+  /auth/refresh:
+    post:
+      operationId: AuthController_refresh
+      parameters:
+        - name: authorization
+          required: true
+          in: header
+          schema:
+            type: string
+      responses:
+        '201':
+          description: ''
 info:
   title: Home Library Service
   description: Home music library service
@@ -831,3 +869,17 @@ components:
         - artists
         - albums
         - tracks
+    LoginUserDto:
+      type: object
+      properties:
+        login:
+          type: string
+          example: testuser
+          description: The login of the user
+        password:
+          type: string
+          example: password123
+          description: The password of the user
+      required:
+        - login
+        - password
