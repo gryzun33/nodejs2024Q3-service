@@ -15,6 +15,7 @@ export class JwtAuthGuard implements CanActivate {
   ) {}
 
   canActivate(context: ExecutionContext): boolean {
+    // console.log('GUARD');
     const request = context.switchToHttp().getRequest();
 
     const { url } = request;
