@@ -9,6 +9,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { LoggingModule } from './logging/logging.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { JwtModule } from '@nestjs/jwt';
         },
       }),
     }),
+    LoggingModule,
   ],
   providers: [
     {
