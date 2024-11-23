@@ -5,14 +5,24 @@ import * as path from 'path';
 
 @Injectable()
 export class LoggingService implements LoggerService {
-  private logLevel: string;
+  private logLevel: number;
   private logDir: string;
   private maxFileSize: number;
 
+  private static readonly LOG_LEVELS = {
+    log: 0,
+    warn: 1,
+    error: 2,
+    debug: 3,
+    verbose: 4,
+  };
+
   constructor(private readonly configService: ConfigService) {
-    this.logLevel = this.configService.get<string>('LOG_LEVEL') || 'verbose';
+    const level = this.configService.get<string>('LOG_LEVEL') || '0';
+    this.logLevel = parseInt(level, 10);
     this.logDir = this.configService.get<string>('LOG_DIR') || 'logs';
-    this.maxFileSize = 10 * 1024 * 1024;
+    this.maxFileSize =
+      Number(this.configService.get<string>('LOG_MAX_FILE_SIZE')) || 10240;
     this.isLogDirectoryExists();
   }
 
@@ -23,51 +33,47 @@ export class LoggingService implements LoggerService {
   }
 
   log(message: string) {
-    if (this.shouldLog('log')) {
+    if (this.shouldLog(LoggingService.LOG_LEVELS.log)) {
       console.log(message);
       this.writeToFile(message);
     }
   }
 
   error(message: string, trace?: string) {
-    if (this.shouldLog('error')) {
+    if (this.shouldLog(LoggingService.LOG_LEVELS.error)) {
       console.error(`${message}\nTrace: ${trace}`);
       this.writeToFile(`${message}\nTrace: ${trace}`);
     }
   }
 
   warn(message: string) {
-    if (this.shouldLog('warn')) {
+    if (this.shouldLog(LoggingService.LOG_LEVELS.warn)) {
       console.warn(message);
       this.writeToFile(message);
     }
   }
 
   debug(message: string) {
-    if (this.shouldLog('debug')) {
+    if (this.shouldLog(LoggingService.LOG_LEVELS.debug)) {
       console.debug(message);
       this.writeToFile(message);
     }
   }
 
   verbose(message: string) {
-    if (this.shouldLog('verbose')) {
+    if (this.shouldLog(LoggingService.LOG_LEVELS.verbose)) {
       console.info(message);
       this.writeToFile(message);
     }
   }
 
-  private shouldLog(level: string): boolean {
-    const levels = ['log', 'warn', 'error', 'debug', 'verbose'];
-    const levelIndex = levels.indexOf(this.logLevel);
-    const messageLevelIndex = levels.indexOf(level);
-    return messageLevelIndex <= levelIndex;
+  private shouldLog(level: number): boolean {
+    return level >= this.logLevel;
   }
 
   private writeToFile(message: string) {
     const logFilePath = this.getLogFilePath();
     this.rotateLogFileIfNeeded(logFilePath);
-
     const timestamp = new Date().toISOString();
     const logMessage = `${timestamp} - ${message}\n`;
 
