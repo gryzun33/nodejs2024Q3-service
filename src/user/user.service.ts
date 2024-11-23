@@ -23,7 +23,6 @@ export class UserService {
       };
       return userResponse;
     } catch (error) {
-      // console.log('ERRRRSERVICE');
       throw new ConflictException(error.message);
     }
   }

@@ -6,6 +6,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as YAML from 'js-yaml';
 import * as fs from 'fs';
 import * as path from 'path';
+import { LoggingService } from './logging/logging.service';
+import { CustomExceptionFilter } from './common/custom-exceptions.filter';
 
 dotenv.config();
 
@@ -35,14 +37,11 @@ async function bootstrap() {
   const filePath = path.join(__dirname, '..', 'doc', 'api.yaml');
   fs.writeFileSync(filePath, yamlDocument, 'utf8');
 
+  const loggingService = app.get(LoggingService);
+
+  app.useGlobalFilters(new CustomExceptionFilter(loggingService));
+
   await app.listen(port);
   console.log(`Application is running`);
-
-  // to check app crashing
-
-  // setTimeout(() => {
-  //   console.log('Simulating crash...');
-  //   process.exit(1);
-  // }, 5000);
 }
 bootstrap();
