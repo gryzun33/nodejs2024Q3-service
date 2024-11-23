@@ -68,7 +68,7 @@ export class LoggingService implements LoggerService {
   }
 
   private shouldLog(level: number): boolean {
-    return level >= this.logLevel;
+    return level <= this.logLevel;
   }
 
   private writeToFile(message: string) {
@@ -87,7 +87,7 @@ export class LoggingService implements LoggerService {
 
   private rotateLogFileIfNeeded(filePath: string) {
     const fileSize = this.getFileSize(filePath);
-    if (fileSize > this.maxFileSize) {
+    if (fileSize > this.maxFileSize * 1024) {
       const newFilePath = filePath.replace('.log', `-${Date.now()}.log`);
       fs.renameSync(filePath, newFilePath);
     }

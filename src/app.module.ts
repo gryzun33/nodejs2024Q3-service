@@ -10,7 +10,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { LoggingModule } from './logging/logging.module';
-import { LoggingMiddleware } from './logging/request-logging.middleware';
+import { LoggingMiddleware } from './logging/logging.middleware';
 import { LoggingService } from './logging/logging.service';
 
 @Module({
