@@ -15,7 +15,7 @@ export class LoggingService implements LoggerService {
     }
   }
 
-  error(message: string, trace: string) {
+  error(message: string, trace?: string) {
     if (this.shouldLog('error')) {
       console.error(`${message}\nTrace: ${trace}`);
     }

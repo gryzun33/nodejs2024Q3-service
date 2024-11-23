@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, OnModuleInit } from '@nestjs/common';
 import { UserModule } from './user/user.module';
 import { ArtistModule } from './artist/artist.module';
 import { AlbumModule } from './album/album.module';
@@ -11,6 +11,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { LoggingModule } from './logging/logging.module';
 import { LoggingMiddleware } from './logging/request-logging.middleware';
+import { LoggingService } from './logging/logging.service';
 
 @Module({
   imports: [
@@ -40,8 +41,29 @@ import { LoggingMiddleware } from './logging/request-logging.middleware';
     },
   ],
 })
-export class AppModule {
+export class AppModule implements OnModuleInit {
+  constructor(private readonly loggingService: LoggingService) {}
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggingMiddleware).forRoutes('*');
+  }
+
+  onModuleInit() {
+    process.on('uncaughtException', (err) => {
+      this.loggingService.error(
+        `Uncaught Exception: ${err.message}`,
+        err.stack,
+      );
+    });
+
+    process.on('unhandledRejection', (reason: any) => {
+      if (reason instanceof Error) {
+        this.loggingService.error(
+          `Unhandled Rejection: ${reason.message}`,
+          reason.stack,
+        );
+      } else {
+        this.loggingService.error(`Unhandled Rejection: ${reason}`);
+      }
+    });
   }
 }
