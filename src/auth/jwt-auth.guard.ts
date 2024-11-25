@@ -15,12 +15,19 @@ export class JwtAuthGuard implements CanActivate {
   ) {}
 
   canActivate(context: ExecutionContext): boolean {
-    // console.log('GUARD');
+    console.log('GUARD');
     const request = context.switchToHttp().getRequest();
 
     const { url } = request;
+    console.log('URL=', url);
 
-    const excludedPaths = ['/auth/login', '/auth/signup', '/doc', '/'];
+    const excludedPaths = [
+      '/auth/login',
+      '/auth/signup',
+      '/doc',
+      '/',
+      '/auth/refresh',
+    ];
     if (excludedPaths.includes(url)) {
       return true;
     }

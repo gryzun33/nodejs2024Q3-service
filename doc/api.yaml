@@ -554,14 +554,9 @@ paths:
   /auth/refresh:
     post:
       operationId: AuthController_refresh
-      parameters:
-        - name: authorization
-          required: true
-          in: header
-          schema:
-            type: string
+      parameters: []
       responses:
-        '201':
+        '200':
           description: ''
 info:
   title: Home Library Service

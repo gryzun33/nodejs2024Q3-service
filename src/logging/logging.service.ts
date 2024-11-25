@@ -8,6 +8,7 @@ export class LoggingService implements LoggerService {
   private logLevel: number;
   private logDir: string;
   private maxFileSize: number;
+  private currentLogFile: string = 'app.log';
 
   private static readonly LOG_LEVELS = {
     log: 0,
@@ -18,11 +19,11 @@ export class LoggingService implements LoggerService {
   };
 
   constructor(private readonly configService: ConfigService) {
-    const level = this.configService.get<string>('LOG_LEVEL') || '0';
+    const level = this.configService.get<string>('LOG_LEVEL') || '2';
     this.logLevel = parseInt(level, 10);
     this.logDir = this.configService.get<string>('LOG_DIR') || 'logs';
     this.maxFileSize =
-      Number(this.configService.get<string>('LOG_MAX_FILE_SIZE')) || 10240;
+      Number(this.configService.get<string>('LOG_MAX_FILE_SIZE')) || 1024;
     this.isLogDirectoryExists();
   }
 
@@ -72,7 +73,7 @@ export class LoggingService implements LoggerService {
   }
 
   private writeToFile(message: string) {
-    const logFilePath = this.getLogFilePath();
+    const logFilePath = path.join(this.logDir, this.currentLogFile);
     this.rotateLogFileIfNeeded(logFilePath);
     const timestamp = new Date().toISOString();
     const logMessage = `${timestamp} - ${message}\n`;
@@ -80,24 +81,29 @@ export class LoggingService implements LoggerService {
     fs.appendFileSync(logFilePath, logMessage);
   }
 
-  private getLogFilePath(): string {
-    const date = new Date().toISOString().split('T')[0];
-    return path.join(this.logDir, `${date}-log.log`);
-  }
-
   private rotateLogFileIfNeeded(filePath: string) {
     const fileSize = this.getFileSize(filePath);
-    if (fileSize > this.maxFileSize * 1024) {
-      const newFilePath = filePath.replace('.log', `-${Date.now()}.log`);
+    // console.log('filesize=', fileSize);
+    if (fileSize > this.maxFileSize) {
+      const newFilePath = this.getRotatedLogFilePath(filePath);
       fs.renameSync(filePath, newFilePath);
+      this.currentLogFile = 'app.log';
     }
+  }
+
+  private getRotatedLogFilePath(filePath: string): string {
+    const date = new Date().toISOString().replace(/[:.]/g, '-');
+    const extIndex = filePath.lastIndexOf('.');
+    const baseName = filePath.substring(0, extIndex);
+    const extension = filePath.substring(extIndex);
+    return `${baseName}-${date}${extension}`;
   }
 
   private getFileSize(filePath: string): number {
     try {
       const stats = fs.statSync(filePath);
-      return stats.size;
-    } catch (e) {
+      return stats.size / 1024;
+    } catch (err) {
       return 0;
     }
   }
