@@ -7,7 +7,7 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UserRepository } from './user.repository';
-import { User, UserLogin, UserResponse } from './entities/user.entity';
+import { UserLogin, UserResponse } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
