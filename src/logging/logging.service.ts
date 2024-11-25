@@ -23,7 +23,7 @@ export class LoggingService implements LoggerService {
     this.logLevel = parseInt(level, 10);
     this.logDir = this.configService.get<string>('LOG_DIR') || 'logs';
     this.maxFileSize =
-      Number(this.configService.get<string>('LOG_MAX_FILE_SIZE')) || 1024;
+      Number(this.configService.get<string>('LOG_MAX_FILE_SIZE')) || 256;
     this.isLogDirectoryExists();
   }
 

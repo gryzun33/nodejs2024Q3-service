@@ -4,26 +4,25 @@ services:
       context: ./db
       dockerfile: Dockerfile
     container_name: postgres_db
-    # image: volha564/library-db:latest
+    image: volha564/library-db:latest
+    env_file: '.env'
     ports:
-      - '${DB_PORT}:${DB_PORT}'
+      - '5433:${DB_PORT}'
     networks:
       - app-network
-    # volumes:
-    #   - postgres_data:/var/lib/postgresql/data
-    #   - postgres_logs:/var/log/postgresql
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - postgres_logs:/var/log/postgresql
     restart: always
 
   app:
     build:
       context: .
       dockerfile: Dockerfile
-      target: development
-    # image: volha564/library-app:latest
+    image: volha564/library-app:latest
     container_name: node_app
     ports:
       - '${PORT}:${PORT}'
-      - '5555:5555'
     depends_on:
       - db
     networks:
@@ -31,10 +30,12 @@ services:
     env_file: '.env'
     restart: always
     command: ['sh', '-c', 'npx prisma migrate deploy && npm run start']
+    volumes:
+      - ./logs:/app/logs
 
 networks:
   app-network:
     driver: bridge
-# volumes:
-#   postgres_data:
-#   postgres_logs:
+volumes:
+  postgres_data:
+  postgres_logs:
