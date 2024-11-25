@@ -1,8 +1,8 @@
 services:
   db:
-    build:
-      context: ./db
-      dockerfile: Dockerfile
+    # build:
+    #   context: ./db
+    #   dockerfile: Dockerfile
     container_name: postgres_db
     image: volha564/library-db:latest
     env_file: '.env'
@@ -16,9 +16,9 @@ services:
     restart: always
 
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
     image: volha564/library-app:latest
     container_name: node_app
     ports:
