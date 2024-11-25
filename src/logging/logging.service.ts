@@ -8,7 +8,7 @@ export class LoggingService implements LoggerService {
   private logLevel: number;
   private logDir: string;
   private maxFileSize: number;
-  private currentLogFile: string = 'app.log';
+  // private currentLogFile: string = 'app.log';
 
   private static readonly LOG_LEVELS = {
     log: 0,
@@ -36,35 +36,37 @@ export class LoggingService implements LoggerService {
   log(message: string) {
     if (this.shouldLog(LoggingService.LOG_LEVELS.log)) {
       console.log(message);
-      this.writeToFile(message);
+      this.writeToFile(message, 'app.log');
     }
   }
 
   error(message: string, trace?: string) {
     if (this.shouldLog(LoggingService.LOG_LEVELS.error)) {
-      console.error(`${message}\nTrace: ${trace}`);
-      this.writeToFile(`${message}\nTrace: ${trace}`);
+      const errorMsg = `${message}\nTrace: ${trace || 'No trace provided'}`;
+      console.error(errorMsg);
+      this.writeToFile(errorMsg, 'app.log');
+      this.writeToFile(errorMsg, 'error.log');
     }
   }
 
   warn(message: string) {
     if (this.shouldLog(LoggingService.LOG_LEVELS.warn)) {
       console.warn(message);
-      this.writeToFile(message);
+      this.writeToFile(message, 'app.log');
     }
   }
 
   debug(message: string) {
     if (this.shouldLog(LoggingService.LOG_LEVELS.debug)) {
       console.debug(message);
-      this.writeToFile(message);
+      this.writeToFile(message, 'app.log');
     }
   }
 
   verbose(message: string) {
     if (this.shouldLog(LoggingService.LOG_LEVELS.verbose)) {
       console.info(message);
-      this.writeToFile(message);
+      this.writeToFile(message, 'app.log');
     }
   }
 
@@ -72,8 +74,8 @@ export class LoggingService implements LoggerService {
     return level <= this.logLevel;
   }
 
-  private writeToFile(message: string) {
-    const logFilePath = path.join(this.logDir, this.currentLogFile);
+  private writeToFile(message: string, fileName: string) {
+    const logFilePath = path.join(this.logDir, fileName);
     this.rotateLogFileIfNeeded(logFilePath);
     const timestamp = new Date().toISOString();
     const logMessage = `${timestamp} - ${message}\n`;
@@ -83,11 +85,9 @@ export class LoggingService implements LoggerService {
 
   private rotateLogFileIfNeeded(filePath: string) {
     const fileSize = this.getFileSize(filePath);
-    // console.log('filesize=', fileSize);
-    if (fileSize > this.maxFileSize) {
+    if (fileSize > this.maxFileSize * 1024) {
       const newFilePath = this.getRotatedLogFilePath(filePath);
       fs.renameSync(filePath, newFilePath);
-      this.currentLogFile = 'app.log';
     }
   }
 

@@ -21,7 +21,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "scan:app": "docker scout cves volha564/library-app",
-    "scan:db": "docker scout cves volha564/library-db"
+    "scan:db": "docker scout cves volha564/library-db",
+    "docker:dev": "docker-compose -f docker-compose.dev.yaml up --build"
   },
   "dependencies": {
     "@nestjs/cli": "^8.0.0",
