@@ -9,10 +9,16 @@ git clone https://github.com/gryzun33/nodejs2024Q3-service.git
 
 ```
 
-Switch to branch `part2`
+Go to folder with project
 
 ```
-git checkout part2
+cd nodejs2024Q3-service
+```
+
+Switch to branch `part3`
+
+```
+git checkout part3
 ```
 
 ### Installing NPM modules
@@ -21,13 +27,7 @@ git checkout part2
 npm install
 ```
 
-### Build images
-
-```
-docker-compose build --no-cache
-```
-
-### Run application in containers
+### Run project
 
 ```
 docker-compose up
@@ -46,7 +46,9 @@ npm run scan:db
 After application running open new terminal and enter:
 
 ```
-npm run test
+npm run test:auth
+
+npm run test:refresh
 ```
 
 ### Auto-fix and format
