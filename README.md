@@ -27,6 +27,9 @@ git checkout part3
 npm install
 ```
 
+### Rename file `env.example`  to `.env`
+
+
 ### Run project
 
 ```
